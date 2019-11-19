@@ -1,0 +1,40 @@
+{
+	"defaultSeverity": "error",
+	"jsRules": {
+	  "no-unused-expression": true
+	},
+	"rules": {
+		"quotemark": [true, "single"],
+		"member-access": [true, "check-constructor", "check-accessor"],
+		"max-line-length": [true, 150],
+		"member-ordering": [false],
+		"interface-name": [false],
+		"no-consecutive-blank-lines": [true],
+		"arrow-parens": false,
+		"object-literal-sort-keys": false,
+		"semicolon": [true, "always"],
+		"indent": [
+			true,
+			"tabs"
+		],
+		"no-console": {
+			"severity": "warning",
+			"options": [
+				"debug",
+				"info",
+				"log",
+				"time",
+				"timeEnd",
+				"trace"
+			]
+		},
+		"trailing-comma": [
+			true,
+			{
+				"multiline": "always",
+				"singleline": "never"
+			}
+		],
+		"ordered-imports": true
+	}
+}
