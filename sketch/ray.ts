@@ -1,3 +1,9 @@
+interface IHelperType {
+    t: number,
+    u: number,
+    point: p5.Vector,
+}
+
 class Ray {
     pos: p5.Vector;
     dir: number;
@@ -8,9 +14,8 @@ class Ray {
     }
 
     // Return intersection point between THIS ray and all walls as vector.
-    cast(): p5.Vector {
-        const intersection =  walls
-            .map(wall => this.castHelper(wall))
+    public cast(): p5.Vector {
+        const intersection = this.castHelper(walls)
             .filter(x => x)
             .reduce((acc, cur) => {
                 if (!acc) {
@@ -27,7 +32,14 @@ class Ray {
     }
 
     // Return intersection point between THIS ray and given wall as vector.
-    private castHelper(wall: Boundary) {
+    private castHelper(wall: Boundary[]): IHelperType[]
+    private castHelper(wall: Boundary): IHelperType
+    private castHelper(wall: Boundary | Boundary[]): IHelperType | IHelperType[] {
+
+        if (Array.isArray(wall)) {
+            return wall.map(x => this.castHelper(x));
+        }
+
         const x1 = this.pos.x;
         const y1 = this.pos.y;
         const x2 = x1 + Math.cos(this.dir);
@@ -56,6 +68,7 @@ class Ray {
                 ),
             }
         }
+
 
         return;
     }
