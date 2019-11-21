@@ -9,7 +9,7 @@
 		"max-line-length": [true, 150],
 		"member-ordering": [false],
 		"interface-name": [false],
-		"no-consecutive-blank-lines": [true],
+		"no-consecutive-blank-lines": [false],
 		"arrow-parens": false,
 		"object-literal-sort-keys": false,
 		"semicolon": [true, "always"],
@@ -18,7 +18,7 @@
 			"tabs"
 		],
 		"no-console": {
-			"severity": "warning",
+			"severity": "none",
 			"options": [
 				"debug",
 				"info",

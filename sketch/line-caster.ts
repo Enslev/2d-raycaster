@@ -4,7 +4,41 @@ interface IHelperType {
 	point: p5.Vector;
 }
 
-class Ray {
+class LineCaster{
+	public pos: p5.Vector;
+	public raysAmount: number;
+	private options: ICasterOpts;
+
+	public constructor(raysAmount: number = 100, options: ICasterOpts) {
+		this.pos = createVector(0, 0);
+		this.raysAmount = raysAmount;
+		this.options = Object.assign({}, DEFAULT_CASTER_OPTIONS, options);
+	}
+
+	public setPos(x: number, y: number) {
+		this.pos = createVector(x, y);
+	}
+
+	public full() {
+		fill(255, 100);
+		beginShape();
+		for (let r = 0; r < 2 * PI; r += PI / (this.raysAmount / 2)) {
+			const ray = new LineCasterRay(this.pos.x, this.pos.y, r);
+			const intersec = ray.cast();
+			if (intersec) {
+				vertex(intersec.x, intersec.y);
+				if (this.options.drawLines) {
+					stroke(255, 100);
+					line(this.pos.x, this.pos.y, intersec.x, intersec.y);
+				}
+			}
+		}
+		noStroke();
+		endShape(CLOSE);
+	}
+}
+
+class LineCasterRay {
 	public pos: p5.Vector;
 	public dir: number;
 
