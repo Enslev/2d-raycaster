@@ -1,68 +1,109 @@
 
-let walls: Boundary[] = [];
-let caster: Caster;
-let locked: boolean = false;
-let obstacles: Obstacle[] = [];
+const walls: Boundary[] = [];
+const obstacles: Obstacle[] = [];
 
-type Caster = LineCaster | SmartCaster;
+let dir: p5.Vector;
+let points: p5.Vector[] = [];
+let speedIndex = 0;
+const speeds = [0.002]
+
+function mousePressed() {
+	speedIndex++;
+	speedIndex = speedIndex % speeds.length;
+}
 
 function setup() {
 	createCanvas(500, 500);
-	noCursor();
+	// noCursor();
+	frameRate(60)
 
-	obstacles.push(new Square(width / 2, height / 2, width - 1, 0));
-	obstacles.push(new Square(150, 100, 80));
-	obstacles.push(new Square(400, 300, 80));
-
-	caster = new SmartCaster(obstacles, {
-		drawLines: true,
-		fill: false,
-	});
+	dir = p5.Vector.fromAngle(-PI / 4);
 
 
-	// caster = new LineCaster(10000, {
-	// 	drawLines: false,
-	// 	fill: true,
-	// });
+	obstacles.push(new Square({
+		centre: createVector(200, 300),
+		size: createVector(50, 100),
+		rot: PI / 4,
+	}))
 
-	// Bounderies of canvas
-	walls.push(new Boundary(-1, -1, 501, -1));
-	walls.push(new Boundary(501, -1, 501, 501));
-	walls.push(new Boundary(501, 501, -1, 501));
-	walls.push(new Boundary(-1, 501, -1, -1));
+	obstacles.push(new Square({
+		centre: createVector(100, 100),
+		size: createVector(50, 50),
+		rot: PI / 10,
+	}))
 
-	walls.push(new Boundary(250, 200, 100, 450));
-	walls.push(new Boundary(250, 200, 300, 200));
-	walls.push(new Boundary(350, 100, 450, 400));
-	walls.push(new Boundary(10, 10, 100, 150));
+	obstacles.push(new Square({
+		centre: createVector(400, 100),
+		size: createVector(50, 50),
+	}))
 
+	obstacles.push(new Square({
+		centre: createVector(80, 320),
+		size: createVector(300, 50),
+		rot: PI / 3
+	}))
 
-}
+	obstacles.push(new Circle({
+		centre: createVector(300, 400),
+		diameter: 100,
+	}))
 
-function mousePressed() {
-	locked = !locked;
-	if (locked) {
-		frameRate(0);
-		cursor(ARROW);
-	} else {
-		frameRate(30);
-		noCursor();
-	}
+	obstacles.push(new Circle({
+		centre: createVector(380, 190),
+		diameter: 70,
+	}))
 }
 
 function draw() {
 	background(0);
+	stroke(255);
+	strokeWeight(1);
+	fill(255);
+	dir = dir.rotate(speeds[speedIndex])
 
-	obstacles.forEach(obst => obst.show());
+	obstacles.forEach(o => o.show());
 
-	// walls.forEach(wall => wall.show());
+	let currentPos = createVector(width / 2, height / 2);
 
-	if (!locked) {
-		caster.setPos(mouseX, mouseY);
+	stroke(255, 50)
+	line(currentPos.x, currentPos.y, currentPos.x + dir.x * 500, currentPos.y + dir.y * 500)
+
+	let distance;
+
+	do {
+		distance = obstacles.reduce((acc, cur) => {
+			const d = cur.distance(currentPos);
+			return acc < d ? acc : d;
+		}, Infinity)
+
+		const newPos = createVector(currentPos.x + dir.x * distance, currentPos.y + dir.y * distance)
+
+		stroke(255);
+		line(currentPos.x, currentPos.y, newPos.x, newPos.y)
+
+		fill(255, 100);
+		circle(currentPos.x, currentPos.y, distance * 2);
+
+		currentPos = newPos;
+
+		if (currentPos.x > width ||
+			currentPos.x < 0 ||
+			currentPos.y > height ||
+			currentPos.y < 0
+		) {
+			break
+		}
+
+	} while (distance > 0.1)
+
+	if (distance < 0.5) {
+		speedIndex = 0;
+		points.push(currentPos);
+	} else {
+		speedIndex = speeds.length - 1;
 	}
 
-	caster.full();
-	noStroke();
 	fill(255);
-	// circle(mouseX, mouseY, 10);
+	noStroke()
+	points.forEach(p => circle(p.x, p.y, 4));
 }

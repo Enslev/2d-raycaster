@@ -10,7 +10,9 @@ const DEFAULT_CASTER_OPTIONS: ICasterOpts = {
 
 
 interface Obstacle {
-	getCorners: () => Array<p5.Vector>;
-	getBoundaries: () => Array<Boundary>;
+	readonly centre: p5.Vector;
+
+	distance: (from: p5.Vector) => number;
+
 	show: () => void;
 }
